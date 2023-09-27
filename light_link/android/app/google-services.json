@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1066114224606",
+    "project_id": "light-link-4596f",
+    "storage_bucket": "light-link-4596f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1066114224606:android:86e14142208b9128c90d4f",
+        "android_client_info": {
+          "package_name": "com.example.light_link"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCeSMT6JBkKZ2hN88NgJft8Yv8-XWp60eY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
