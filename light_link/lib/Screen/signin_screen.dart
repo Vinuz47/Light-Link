@@ -1,8 +1,9 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:light_link/Screen/home_screen.dart';
-import 'package:light_link/Screen/signup_screen.dart';
+
 import '../reusable_widget/reusable_widget.dart';
 import '../utils/colours.dart';
 
@@ -14,9 +15,15 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  TextEditingController _passwordTextController = TextEditingController();
-  TextEditingController _mobilenumberTextController = TextEditingController();
-  bool _isHidden = true;
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController otpController = TextEditingController();
+
+  FirebaseAuth auth = FirebaseAuth.instance;
+
+  bool otpVisibility = false;
+
+  String verificationID = "";
+  bool  _isHidden = true;
 
   @override
   Widget build(BuildContext context) {
@@ -46,42 +53,32 @@ class _SignInScreenState extends State<SignInScreen> {
 
                 reusableTextField1(
                     "Enter Mobile Number ", Icons.phone_android, false,
-                    _mobilenumberTextController),
+                    phoneController),
+
+                    const Text('Start with your mobile number: +94..',
+                    style:TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                  
 
                 const SizedBox(
-                  height: 20,
+                  height: 10,
                 ),
 
-                reusableTextField2(
-                    "Enter Password", Icons.lock_outline, _isHidden,
-                    _passwordTextController),
+              
+
+                Visibility(
+                  child: reusableTextField1(
+                    "Enter OTP Number ", Icons.phone_android, false,
+                    otpController),visible: otpVisibility,),
 
                 const SizedBox(
-                  height: 5,
+                  height: 30,
                 ),
 
-                forgetPassword(context),
-                // firebaseUIButton(context, "Sign In", () {
-                //   FirebaseAuth.instance.signInWithEmailAndPassword(
-                //       email: _emailTextController.text,
-                //       password: _passwordTextController.text)
-                //       .then((value) {
-                //     Navigator.push(context,
-                //         MaterialPageRoute(builder: (context)=> SignUpSelectionScreen()));
-                //   }).onError((error, stackTrace) {
-                //     print("Error ${error.toString()}");
-                //   });
-                // }),
-                ElevatedButton.icon(
-                  icon: Icon(Icons.login_rounded),
-                  label: Text("Sign In"),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CustomerHomeScreen()),
-                    );
-                  },
+                ElevatedButton(
+                  //Icon(Icons.login_rounded),
+                  
+                  //label: Text("Sign In"),
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
                     backgroundColor: Colors.white,
@@ -94,25 +91,29 @@ class _SignInScreenState extends State<SignInScreen> {
                     //  side: BorderSide(color: Colors.black, width: 2),
                     shape: StadiumBorder(),
                   ),
-                ),
-                SizedBox(
+                  onPressed: () {
+                if(otpVisibility){
+                    verifyOTP();
+
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //       builder: (context) =>const CustomerHomeScreen()),
+                    // );
+                  
+                  }
+                  else {
+                    loginWithPhone();
+                  }
+                  },
+                  child: Text(otpVisibility ? "Verify" : "Login")),
+                  
+                
+
+                const SizedBox(
                   height: 30,
                 ),
-                // ElevatedButton.icon(
-                //   onPressed: () async {
-                //     await FirebaseServices().signInWithGoogle();
-                //     Navigator.push(context,
-                //         MaterialPageRoute(builder: (context) => HomeScreen()));
-                //   },
-                //
-                //   icon: Icon(Icons.g_mobiledata_sharp),
-                //   label: Text("Sign In with Google"),
-                //   style: ElevatedButton.styleFrom(
-                //     primary: Colors.red, // Change the color as per your preference
-                //     onPrimary: Colors.white,
-                //   ),
-                // ),
-                signUpOption()
+              
               ],
             ),
           ),
@@ -121,52 +122,60 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  void _togglePasswordView() {
-    setState(() {
-      _isHidden = !_isHidden;
+
+
+
+  void loginWithPhone() async {
+    auth.verifyPhoneNumber(
+      phoneNumber: phoneController.text,
+      verificationCompleted: (phoneAuthCredential) async => await CustomerHomeScreen(),
+      //(PhoneAuthCredential credential) async {
+        // await auth.signInWithCredential(credential).then((value){
+        //   print("You are logged in successfully");
+        // });
+     // },
+      verificationFailed: (FirebaseAuthException e) {
+        print(e.message);
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        otpVisibility = true;
+        verificationID = verificationId;
+        setState(() {});
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+      },
+    );
+  }
+
+  void verifyOTP() async {
+
+    PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationID, smsCode: otpController.text);
+
+    await auth.signInWithCredential(credential).then((value){
+      print("You are logged in successfully");
+      Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                      builder: (context) =>const CustomerHomeScreen()),
+                    );
+    
+      Fluttertoast.showToast(
+          msg: "You are logged in successfully",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 2, //time that msg will show
+          backgroundColor:const Color.fromARGB(255, 102, 169, 204),
+          textColor: Colors.white,
+          fontSize: 14.0
+      );
+      
     });
+
+  
   }
 
-  Row signUpOption() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text("Don't have account?",
-            style: TextStyle(color: Colors.black)),
-        GestureDetector(
-          onTap: () {
-            Navigator.push(context as BuildContext,
-                MaterialPageRoute(builder: (context) => SignUpScreen()));
-          },
-          child: const Text(
-            "Sign Up",
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget forgetPassword(BuildContext context) {
-    return Container(
-      width: MediaQuery
-          .of(context)
-          .size
-          .width,
-      height: 35,
-      alignment: Alignment.bottomRight,
-      child: TextButton(
-        child: const Text(
-          "Forgot Password?",
-          style: TextStyle(color: Colors.black),
-          textAlign: TextAlign.right,
-        ),
-        onPressed: () =>
-            Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SignUpScreen())),
-      ),
-    );
+  TextEditingController phoneNumberfunc(){
+    return phoneController;
   }
 }
 

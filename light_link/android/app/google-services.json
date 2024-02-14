@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "1066114224606",
-    "project_id": "light-link-4596f",
-    "storage_bucket": "light-link-4596f.appspot.com"
+    "project_number": "1054852155673",
+    "firebase_url": "https://light-link-72bec-default-rtdb.firebaseio.com",
+    "project_id": "light-link-72bec",
+    "storage_bucket": "light-link-72bec.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1066114224606:android:86e14142208b9128c90d4f",
+        "mobilesdk_app_id": "1:1054852155673:android:0ec2519ccc563f636f1d88",
         "android_client_info": {
           "package_name": "com.example.light_link"
         }
@@ -15,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCeSMT6JBkKZ2hN88NgJft8Yv8-XWp60eY"
+          "current_key": "AIzaSyDoaBP_OtfpYI_xeZJI-JVT4vfxag3n_lw"
         }
       ],
       "services": {

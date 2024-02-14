@@ -17,6 +17,7 @@ TextField reusableTextField1(String text, IconData icon, bool isPasswordType,
   return TextField(
     controller: controller,
     obscureText: isPasswordType,
+    keyboardType: TextInputType.number,
     enableSuggestions: !isPasswordType,
     autocorrect: !isPasswordType,
     cursorColor: Colors.black,
@@ -36,9 +37,9 @@ TextField reusableTextField1(String text, IconData icon, bool isPasswordType,
           borderRadius: BorderRadius.circular(20.0),
           borderSide: const BorderSide(width: 0, style: BorderStyle.none)),
     ),
-    keyboardType: isPasswordType
-        ? TextInputType.visiblePassword
-        : TextInputType.emailAddress,
+    // keyboardType: isPasswordType
+    //     ? TextInputType.visiblePassword
+    //     : TextInputType.emailAddress,
   );
 }
 
@@ -108,3 +109,4 @@ TextField reusableTextField2(String text, IconData icon, bool isPasswordType,
         : TextInputType.emailAddress,
   );
 }
+
